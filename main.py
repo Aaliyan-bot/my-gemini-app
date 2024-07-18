@@ -1,8 +1,8 @@
 import json
 import os
-
-import google.generativeai as genai
-from flask import Flask, jsonify, request, send_file, send_from_directory
+import traceback
+from google import generativeai as genai
+from flask import Flask, jsonify, request, send_file, send_from_directory, Response
 
 
 API_KEY = 'AIzaSyBQIj8EOOn0e5TCOWwTtrywrXdSz-dChvY'
@@ -20,7 +20,7 @@ def index():
 @app.route("/api/generate", methods=["POST"])
 def generate_api():
     if request.method == "POST":
-        if API_KEY == 'TODO':
+        if API_KEY == 'AIzaSyBQIj8EOOn0e5TCOWwTtrywrXdSz-dChvY ':
             return jsonify({ "error": '''
                 To get started, get an API key at
                 https://g.co/ai/idxGetGeminiKey and enter it in
@@ -35,9 +35,10 @@ def generate_api():
                 for chunk in response:
                     yield 'data: %s\n\n' % json.dumps({ "text": chunk.text })
 
-            return stream(), {'Content-Type': 'text/event-stream'}
+            return Response(stream(), content_type='text/event-stream')
 
         except Exception as e:
+            traceback.print_exc()
             return jsonify({ "error": str(e) })
 
 
